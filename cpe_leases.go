@@ -45,7 +45,7 @@ func getCMCPELeases() (CMCPEMap, error) {
 			if err != nil {
 				//log.Print("Error: ", err)
 			}
-			fmt.Printf("[%s-%s]..", rr.Start.String(), rr.End.String())
+			fmt.Printf("[%s-%s] ", rr.Start.String(), rr.End.String())
 		}()
 	}
 

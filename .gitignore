@@ -1,3 +1,4 @@
 ipmaps
 *.json
 subscribers.csv
+tmp\*

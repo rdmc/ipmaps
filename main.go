@@ -34,41 +34,38 @@ var (
 
 func main() {
 	var err error
+	startTime := time.Now()
 
-	fmt.Println("ipmaps, generates subscriber/ip mappings for the Cisco SCA BB, SM p3subsdb.")
+	fmt.Println("ipmaps. Generates subscriber/ip mappings for the Cisco SCA BB, SM p3subsdb.")
 
 	log.SetFlags(0)
 	log.SetPrefix("ipmaps: ")
 
-	fmt.Print("readConfig...")
+	fmt.Print("readConfig: ")
 	err = readConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("OK")
 
-	fmt.Print("readTemplateToPackage...")
+	fmt.Print("ok\nreadTemplateToPackage: ")
 	TemplatePackage, err = readTemplateToPackage()
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("OK")
 
-	fmt.Print("getMACTemplates...")
+	fmt.Print("ok\ngetMACTemplates: ")
 	CMTemplate, err = getCMTemplates()
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("OK")
 
-	fmt.Print("getCMCPELeases...")
+	fmt.Print("ok\ngetCMCPELeases: ")
 	CMCPE, err = getCMCPELeases()
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("OK")
 
-	fmt.Printf("write output file %q...", Conf.OutputFile)
+	fmt.Printf("ok\nwrite output file %q:", Conf.OutputFile)
 	of, err := os.Create(Conf.OutputFile)
 	if err != nil {
 		panic(err)
@@ -76,10 +73,10 @@ func main() {
 	defer of.Close()
 	w := bufio.NewWriter(of)
 
-	//header
+	// subscriber file header
 	fmt.Fprintf(w, SCESubsriberHeader, time.Now().Format(time.RFC3339))
 
-	// work
+	// subscriber file lines
 	noPackTmpl := 0
 	for cm, cpes := range CMCPE {
 		template, ok := CMTemplate[cm]
@@ -96,11 +93,13 @@ func main() {
 		fmt.Fprintf(w, SCESubscribersLine, cm, cpes, pack)
 	}
 	w.Flush()
-	fmt.Println("OK")
+	fmt.Println("ok")
+
+	runtime := time.Since(startTime)
 
 	// Write stats
-	fmt.Printf("stats: TemplatePackages=%d, CMTemplate=%d, CMCPE=%d, noPackTmpl=%d\n",
-		len(TemplatePackage), len(CMTemplate), len(CMCPE), noPackTmpl)
+	fmt.Printf("stats: TemplatePackages=%d, CMTemplate=%d, CMCPE=%d, noPackTmpl=%d, run in %f secs.\n",
+		len(TemplatePackage), len(CMTemplate), len(CMCPE), noPackTmpl, runtime.Seconds())
 
 	// bye, bye
 	fmt.Println("That's all Folks!!")
