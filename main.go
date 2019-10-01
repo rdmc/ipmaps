@@ -35,7 +35,7 @@ var (
 func main() {
 	var err error
 
-	fmt.Println("ipmaps, generates subscriber/ip mappings for the Cisco SCA BB, SM p3subsdb")
+	fmt.Println("ipmaps, generates subscriber/ip mappings for the Cisco SCA BB, SM p3subsdb.")
 
 	log.SetFlags(0)
 	log.SetPrefix("ipmaps: ")
