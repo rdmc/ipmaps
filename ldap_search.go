@@ -25,12 +25,9 @@ var (
 )
 
 // is "getLDAPCMTemplates()" a better name then ?"getCMTemplates()" ???
-func getCMTemplates() (CMTemplateMap, error) {
+func getLDAPCMTemplates() (CMTemplateMap, error) {
 	var mt CMTemplateMap
 	mt = make(map[string]int)
-
-	// connect
-	//fmt.Print("connect, ")
 
 	// ldap.DefaultTimeout package-level variavel
 	ldap.DefaultTimeout = Conf.Timeout
@@ -41,26 +38,18 @@ func getCMTemplates() (CMTemplateMap, error) {
 	}
 	defer l.Close()
 
-	//fmt.Print("bind, ")
-
 	l.SetTimeout(Conf.Timeout)
-	// bind
+
 	err = l.Bind(Conf.LDAPBindUser, Conf.LDAPBindPassword)
 	if err != nil {
 		return nil, fmt.Errorf("getMACTemplates Bind error: %s", err)
 	}
 
-	//fmt.Print("search")
-
 	// search
 	pagingControl := ldap.NewControlPaging(pageSize)
 	controls := []ldap.Control{pagingControl}
 
-	//packagesCnt := make(map[int]int)
-
 	for {
-		fmt.Print(". ")
-
 		request := ldap.NewSearchRequest(searchBase, ldap.ScopeSingleLevel, ldap.DerefAlways,
 			0, 0, false, filter, attributes, controls)
 		sr, err := l.Search(request)

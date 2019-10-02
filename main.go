@@ -10,6 +10,13 @@ import (
 )
 
 const (
+	// Program name
+	programName = "ipmaps"
+	// Program Version
+	programVersion = "0.1.0" // Major.Minor.Patch
+	// Program header
+	programHeader = programName + " " + programVersion +
+		". Generates subscriber/ip mappings for the Cisco SCA BB, SM p3subsdb."
 	//SCESubsriberHeader Header for  SCAS BB sm p3subsdb subscriber file
 	SCESubsriberHeader = "# SCE Subscribers @%s\n# CSV line format: subscriber-id, domain, mappings, package-id\n"
 	// SCESubscribersLine = "CMMAC,,CPEIPS, PACkAGE"
@@ -36,37 +43,56 @@ func main() {
 	var err error
 	startTime := time.Now()
 
-	fmt.Println("ipmaps. Generates subscriber/ip mappings for the Cisco SCA BB, SM p3subsdb.")
+	fmt.Println(programHeader)
+
+	flag.Parse()
+
+	if flag.NArg() > 0 {
+		fmt.Println("usage xxxxxxxxxxxxxxxxxx")
+		flag.PrintDefaults()
+		log.Fatal("Bye, bye.")
+		// PROGRAM TERMINATE
+	}
 
 	log.SetFlags(0)
-	log.SetPrefix("ipmaps: ")
+	log.SetPrefix(programName + ": ")
 
-	fmt.Print("readConfig: ")
+	verbosePrintf("readConfig: ")
+	//fmt.Print("readConfig: ")
 	err = readConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Print("ok\nreadTemplateToPackage: ")
+	verbosePrintf("ok\nreadTemplateToPackage: ")
+	//fmt.Print("ok\nreadTemplateToPackage: ")
 	TemplatePackage, err = readTemplateToPackage()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Print("ok\ngetMACTemplates: ")
-	CMTemplate, err = getCMTemplates()
+	verbosePrintf("ok\ngetMACTemplates: ")
+	//fmt.Print("ok\ngetMACTemplates: ")
+	CMTemplate, err = getLDAPCMTemplates()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Print("ok\ngetCMCPELeases: ")
+	verbosePrintf("ok\ngetCMCPELeases: ")
+	//fmt.Print("ok\ngetCMCPELeases: ")
 	CMCPE, err = getCMCPELeases()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("ok\nwrite output file %q:", Conf.OutputFile)
-	of, err := os.Create(Conf.OutputFile)
+	ofName := Conf.OutputFile
+	if *outputFile != "" {
+		ofName = *outputFile
+	}
+
+	verbosePrintf("ok\nwrite output file %q:", ofName)
+	//fmt.Printf("ok\nwrite output file %q:", ofName)
+	of, err := os.Create(ofName)
 	if err != nil {
 		panic(err)
 	}
@@ -93,7 +119,8 @@ func main() {
 		fmt.Fprintf(w, SCESubscribersLine, cm, cpes, pack)
 	}
 	w.Flush()
-	fmt.Println("ok")
+	verbosePrintf("ok\n")
+	//fmt.Println("ok")
 
 	runtime := time.Since(startTime)
 
@@ -103,4 +130,25 @@ func main() {
 
 	// bye, bye
 	fmt.Println("That's all Folks!!")
+}
+
+/* logging to a file
+
+ 	f, err := os.OpenFile("app.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+        if err != nil {
+                log.Fatal(err)
+        }
+        defer f.Close()
+        log.SetOutput(f)
+	log.Println("Application started")
+*/
+
+func verbosePrintf(fmts string, args ...interface{}) {
+	if *verbose { // TODO: Config.Verbose if "-v" not set
+		//programCounter, file, line, _ := runtime.Caller(1)
+		//fn := runtime.FuncForPC(programCounter)
+		//prefix := fmt.Sprintf("[%s:%s %d] %s", file, fn.Name(), line, fmts)
+		fmt.Printf(fmts, args...)
+		//fmt.Println()
+	}
 }

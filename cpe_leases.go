@@ -45,7 +45,7 @@ func getCMCPELeases() (CMCPEMap, error) {
 			if err != nil {
 				//log.Print("Error: ", err)
 			}
-			fmt.Printf("[%s-%s] ", rr.Start.String(), rr.End.String())
+			//fmt.Printf("[%s-%s] ", rr.Start.String(), rr.End.String())
 		}()
 	}
 
@@ -71,7 +71,7 @@ func getCMCPELeases() (CMCPEMap, error) {
 
 func ipcliExec(ipr ipRange, rc chan<- ipMac) error {
 	if _, err := exec.LookPath(ipcliCmd); err != nil {
-		return fmt.Errorf("ipcliExec: %s executable not found, %v", ipcliCmd, err)
+		return fmt.Errorf("ipcliExec: %q executable not found, %v", Conf.IPCliCmd, err)
 	}
 
 	commandLine := fmt.Sprintf(listLeases, ipr.Start, ipr.End)
