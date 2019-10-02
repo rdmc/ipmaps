@@ -1,4 +1,4 @@
 ipmaps
 *.json
-subscribers.csv
 tmp\*
+ipcli.log
