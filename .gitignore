@@ -2,3 +2,4 @@ ipmaps
 *.json
 tmp\*
 ipcli.log
+subscribers.csv
