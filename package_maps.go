@@ -22,7 +22,7 @@ func readTemplateToPackage() (TemplatePackageMap, error) {
 	tp = make(map[int]int)
 
 	// load package map file
-	csvF, err := os.Open(Conf.TemplateToPackageFile)
+	csvF, err := os.Open(cfg.TemplateToPackageFile)
 	if err != nil {
 		return nil, fmt.Errorf("readTemplateToPackage open error: %s", err)
 	}

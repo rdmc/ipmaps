@@ -48,7 +48,7 @@ func main() {
 	flag.Parse()
 
 	if flag.NArg() > 0 {
-		fmt.Println("usage xxxxxxxxxxxxxxxxxx")
+		fmt.Println("usage: " + programName + " [-v][-cf filename][-o filename]")
 		flag.PrintDefaults()
 		log.Fatal("Bye, bye.")
 		// PROGRAM TERMINATE
@@ -85,7 +85,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ofName := Conf.OutputFile
+	ofName := cfg.OutputFile
 	if *outputFile != "" {
 		ofName = *outputFile
 	}
@@ -149,6 +149,5 @@ func verbosePrintf(fmts string, args ...interface{}) {
 		//fn := runtime.FuncForPC(programCounter)
 		//prefix := fmt.Sprintf("[%s:%s %d] %s", file, fn.Name(), line, fmts)
 		fmt.Printf(fmts, args...)
-		//fmt.Println()
 	}
 }

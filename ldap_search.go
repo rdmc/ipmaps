@@ -30,17 +30,17 @@ func getLDAPCMTemplates() (CMTemplateMap, error) {
 	mt = make(map[string]int)
 
 	// ldap.DefaultTimeout package-level variavel
-	ldap.DefaultTimeout = Conf.Timeout
+	ldap.DefaultTimeout = cfg.Timeout
 
-	l, err := ldap.Dial("tcp", fmt.Sprintf("%s:%d", Conf.LDAPHost, Conf.LDAPPort))
+	l, err := ldap.Dial("tcp", fmt.Sprintf("%s:%d", cfg.LDAPHost, cfg.LDAPPort))
 	if err != nil {
 		return nil, fmt.Errorf("getMACTemplates Dial error: %s", err)
 	}
 	defer l.Close()
 
-	l.SetTimeout(Conf.Timeout)
+	l.SetTimeout(cfg.Timeout)
 
-	err = l.Bind(Conf.LDAPBindUser, Conf.LDAPBindPassword)
+	err = l.Bind(cfg.LDAPBindUser, cfg.LDAPBindPassword)
 	if err != nil {
 		return nil, fmt.Errorf("getMACTemplates Bind error: %s", err)
 	}

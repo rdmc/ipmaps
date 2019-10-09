@@ -36,7 +36,7 @@ func getCMCPELeases() (CMCPEMap, error) {
 	var wg sync.WaitGroup
 	resChan := make(chan ipMac)
 
-	for _, r := range Conf.NetworkLeases {
+	for _, r := range cfg.NetworkLeases {
 		wg.Add(1)
 		rr := r
 		go func() {
@@ -71,21 +71,21 @@ func getCMCPELeases() (CMCPEMap, error) {
 
 func ipcliExec(ipr ipRange, rc chan<- ipMac) error {
 	if _, err := exec.LookPath(ipcliCmd); err != nil {
-		return fmt.Errorf("ipcliExec: %q executable not found, %v", Conf.IPCliCmd, err)
+		return fmt.Errorf("ipcliExec: %q executable not found, %v", cfg.IPCliCmd, err)
 	}
 
 	commandLine := fmt.Sprintf(listLeases, ipr.Start, ipr.End)
 
-	args := []string{"-S", Conf.IPCliCluster,
-		"-N", Conf.IPCliUser,
-		"-P", Conf.IPCliPass,
+	args := []string{"-S", cfg.IPCliCluster,
+		"-N", cfg.IPCliUser,
+		"-P", cfg.IPCliPass,
 		"-OF", "CSV"}
 
-	ctx, cancel := context.WithTimeout(context.Background(), Conf.Timeout)
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.Timeout)
 	defer cancel()
 
 	cmd := exec.CommandContext(ctx, ipcliCmd, args...)
-	cmd.Dir = Conf.WorkDir
+	cmd.Dir = cfg.WorkDir
 	cmd.Stdin = bytes.NewBufferString(commandLine)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {

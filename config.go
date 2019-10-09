@@ -21,8 +21,8 @@ const (
 )
 
 var (
-	// Conf global var tha holds program configuration
-	Conf Config
+	// cfg global var tha holds program configuration
+	cfg Config
 )
 
 // Config structure tha holds application configuration
@@ -60,7 +60,7 @@ func readConfig() error {
 	defer f.Close()
 
 	dec := json.NewDecoder(f)
-	if err := dec.Decode(&Conf); err != nil {
+	if err := dec.Decode(&cfg); err != nil {
 		return fmt.Errorf("unable to decode JSON file, %v", err)
 	}
 
@@ -124,7 +124,7 @@ func main() {
 	if err != nil {
 		log.Printf("Error loading config file: %v", err)
 	}
-	//fmt.Printf("config:\n%v\n", Conf)
+	//fmt.Printf("config:\n%v\n", cfg)
 
 }
 */
